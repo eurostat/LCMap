@@ -10,9 +10,9 @@ from utils.geotiff import resample_geotiff_aligned
 
 
 
-resolutions = [10000, 5000, 2000, 1000, 500] #, 200, 100]
-resampling = False
-tiling = True
+resolutions = [200, 100] #[10000, 5000, 2000, 1000, 500] #, 200, 100]
+resampling = True
+tiling = False
 
 
 
