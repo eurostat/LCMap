@@ -12,8 +12,8 @@ from utils.geotiff import resample_geotiff_aligned
 
 resolutions = [200, 100] #[10000, 5000, 2000, 1000, 500] #, 200, 100]
 years = ["2018", "2012", "2006", "2000", "1990"]
-resampling = True
-tiling = False
+resampling = False
+tiling = True
 
 
 
