@@ -42,7 +42,9 @@ if tiling:
             print(datetime.now(), "Tiling", year, resolution)
 
             # make folder for resolution
-            folder_ = "./out/v1/"+year+"/"+str(resolution)+"/"
+            # TODO
+            folder_ = "/home/juju/Bureau/aaa/"+year+"/"+str(resolution)+"/"
+            #folder_ = "./out/v1/"+year+"/"+str(resolution)+"/"
             if not os.path.exists(folder_): os.makedirs(folder_)
 
             # prepare dict for geotiff bands
