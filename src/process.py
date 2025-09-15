@@ -37,9 +37,8 @@ if resampling:
 
 if tiling:
     # tiling
-    for year in years:
-
-        for resolution in resolutions:
+    for resolution in resolutions:
+        for year in years:
             print(datetime.now(), "Tiling", year, resolution)
 
             # make folder for resolution
