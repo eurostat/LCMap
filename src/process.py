@@ -12,14 +12,18 @@ inpath = "/home/juju/geodata/CLC/"
 resolutions = [10000, 5000, 2000, 1000, 500, 200, 100]
 
 
-#/home/juju/geodata/CLC/u2000_clc1990_v2020_20u1_raster100m/DATA/U2000_CLC1990_V2020_20u1.tif
-
-
 # resampling
+input_files = {
+    "2018": "u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif",
+    "2012": "u2018_clc2012_v2020_20u1_raster100m/DATA/U2018_CLC2012_V2020_20u1.tif",
+    "2006": "u2012_clc2006_v2020_20u1_raster100m/DATA/U2012_CLC2006_V2020_20u1.tif",
+    "2000": "u2006_clc2000_v2020_20u1_raster100m/DATA/U2006_CLC2000_V2020_20u1.tif",
+    "1990": "u2000_clc1990_v2020_20u1_raster100m/DATA/U2000_CLC1990_V2020_20u1.tif",
+}
 for resolution in resolutions:
     for year in ["2018", "2012", "2006", "2000", "1990"]:
         print(datetime.now(), "resampling", year, resolution)
-        infile = "u2000_clc"+year+"_v2020_20u1_raster100m/DATA/U2000_CLC"+year+"_V2020_20u1.tif"
+        infile = input_files[year]
         resample_geotiff_aligned(inpath + infile, "./tmp/"+year+"_"+str(resolution)+".tif", resolution, resampling=Resampling.mode, dtype=np.int8)
 
 
