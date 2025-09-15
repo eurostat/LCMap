@@ -10,8 +10,8 @@ from utils.geotiff import resample_geotiff_aligned
 
 
 
-resolutions = [200, 100] #[10000, 5000, 2000, 1000, 500] #, 200, 100]
-years = ["2018", "2012", "2006", "2000", "1990"]
+resolutions = [200] #[10000, 5000, 2000, 1000, 500] #, 200, 100]
+years = ["2012", "2006", "2000", "1990"] #2018
 resampling = False
 tiling = True
 
@@ -37,9 +37,8 @@ if resampling:
 
 if tiling:
     # tiling
-    for year in years:
-
-        for resolution in resolutions:
+    for resolution in resolutions:
+        for year in years:
             print(datetime.now(), "Tiling", year, resolution)
 
             # make folder for resolution
