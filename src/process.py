@@ -13,7 +13,8 @@ from utils.geotiff import resample_geotiff_aligned
 resolutions = [200, 100] #[10000, 5000, 2000, 1000, 500] #, 200, 100]
 years = ["2012", "2006", "2000", "1990"]
 resampling = False
-tiling = True
+tiling = False
+tiling_change = True
 
 
 
@@ -42,8 +43,8 @@ if tiling:
             print(datetime.now(), "Tiling", year, resolution)
 
             # make folder for resolution
-            folder_ = "/home/juju/Bureau/"+year+"/"+str(resolution)+"/"
-            #folder_ = "./out/v1/"+year+"/"+str(resolution)+"/"
+            #folder_ = "/home/juju/Bureau/"+year+"/"+str(resolution)+"/"
+            folder_ = "./out/v1/"+year+"/"+str(resolution)+"/"
             if not os.path.exists(folder_): os.makedirs(folder_)
 
             # prepare dict for geotiff bands
@@ -58,5 +59,31 @@ if tiling:
                 tile_size_cell = 512,
                 format="parquet",
                 num_processors_to_use = 10,
-                #modif_fun = lambda v: int(v),
                 )
+
+
+if tiling_change:
+    # tiling for change - 1 column per year
+    for resolution in resolutions:
+        print(datetime.now(), "Tiling", resolution)
+
+        # make folder for resolution
+        #folder_ = "/home/juju/Bureau/change/"+str(resolution)+"/"
+        folder_ = "./out/v1/change/"+str(resolution)+"/"
+        if not os.path.exists(folder_): os.makedirs(folder_)
+
+        # prepare dict for geotiff bands
+        dict = {}
+        for year in years:
+            dict["code"+year] = { "file" : "./tmp/"+year+"_"+str(resolution)+".tif", "band":1 }
+
+        # launch tiling
+        gridtiler_raster.tiling_raster(
+            dict,
+            folder_,
+            crs="EPSG:3035",
+            tile_size_cell = 256,
+            format="parquet",
+            num_processors_to_use = 10,
+            )
+
