@@ -65,7 +65,7 @@ if tiling:
 if tiling_change:
     # tiling for change - 1 column per year
     for resolution in resolutions:
-        print(datetime.now(), "Tiling", resolution)
+        print(datetime.now(), "Tiling change", resolution)
 
         # make folder for resolution
         #folder_ = "/home/juju/Bureau/change/"+str(resolution)+"/"
