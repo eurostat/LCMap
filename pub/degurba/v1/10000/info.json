@@ -1,0 +1,16 @@
+{
+   "dims": [],
+   "crs": "EPSG:3035",
+   "tileSizeCell": 512,
+   "originPoint": {
+      "x": -2820000,
+      "y": -3070000
+   },
+   "resolutionGeo": 10000,
+   "tilingBounds": {
+      "yMin": 0,
+      "yMax": 1,
+      "xMax": 2,
+      "xMin": 0
+   }
+}
