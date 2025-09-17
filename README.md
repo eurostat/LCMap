@@ -1,2 +1,2 @@
-# tiled-clc
-Tiling Corine Land Cover data for gridviz web maps
+# LCMap
+Land cover web maps, for Eurostat statistics
