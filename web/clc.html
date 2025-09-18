@@ -65,6 +65,11 @@
 				(resolution) => new gviz_par.TiledParquetGrid(map, 'https://raw.githubusercontent.com/eurostat/LCMap/main/pub/clc/v1/' + year + '/' + resolution + '/')
 			)
 
+		const changeDataset = new gridviz.MultiResolutionDataset(
+			[100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000],
+			(resolution) => new gviz_par.TiledParquetGrid(map, 'https://raw.githubusercontent.com/eurostat/LCMap/main/pub/clc/v1/change/' + resolution + '/')
+		)
+
 		//define colors for categories
 		const clcColors = {
 			1: '#e6004d',
@@ -182,7 +187,6 @@
 		})
 
 
-
 		//define background layers
 		const backgroundLayer1 = new gridviz.BackgroundLayer({
 			url: 'https://raw.githubusercontent.com/jgaffuri/mbxyz/main/pub/elevation_shading/',
@@ -210,6 +214,20 @@
 				const ds = clcDataset[+layer.replace("clc", "")]
 				const clcLayer = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
 				map.layers = [backgroundLayer1, backgroundLayer2, clcLayer, boundariesLayer, labelLayer]
+			} else if (layer == "change") {
+				year1 = "code1990"
+				year2 = "code2018"
+
+				//define style
+				const changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
+					code: (cell) => cell[year2],
+					color: clcColors,
+					//visible: (z) => z >= 25,
+				})
+
+				const lay = new gridviz.GridLayer(ds, [changeStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[year2] })
+				map.layers = [backgroundLayer1, backgroundLayer2, lay, boundariesLayer, labelLayer]
+
 			}
 			else map.layers = [backgroundLayer1, backgroundLayer2, boundariesLayer, labelLayer]
 
