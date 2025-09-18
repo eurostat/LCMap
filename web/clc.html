@@ -215,22 +215,34 @@
 				const clcLayer = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
 				map.layers = [backgroundLayer1, backgroundLayer2, clcLayer, boundariesLayer, labelLayer]
 			} else if (layer == "change") {
-				year1 = "code1990"
-				year2 = "code2018"
+				y1 = 1990
+				y2 = 2018
 
-				//define style
-				const changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
-					code: (cell) => cell[year2],
-					color: clcColors,
-					//visible: (z) => z >= 25,
-					filter: (cell) => cell[year1] != cell[year2]
-				})
+				if (y1 >= y2) {
+					map.layers = [backgroundLayer1, backgroundLayer2, boundariesLayer, labelLayer]
+				} else {
+					year1 = "code" + y1
+					year2 = "code" + y2
 
-				const lay = new gridviz.GridLayer(changeDataset, [changeStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[year2] })
-				map.layers = [backgroundLayer1, backgroundLayer2, lay, boundariesLayer, labelLayer]
+					//define style
+					const changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
+						code: (cell) => cell[year2],
+						color: clcColors,
+						//visible: (z) => z >= 25,
+						filter: (cell) => cell[year1] != cell[year2]
+					})
 
-			}
-			else map.layers = [backgroundLayer1, backgroundLayer2, boundariesLayer, labelLayer]
+					const lay = new gridviz.GridLayer(changeDataset, [changeStyle], {
+						minPixelsPerCell: 0.8, cellInfoHTML: (c) => {
+							const a = c[year1], b = c[year2]
+							if (a == b) return "No change<br>" + clcLabels[a] + " (code " + a + ")"
+							return "Change<br>" + y1 + ": " + clcLabels[a] + " (code " + a + ")<br>" + y2 + ": "
+								+ clcLabels[b] + " (code " + b + ")"
+						},
+					})
+					map.layers = [backgroundLayer1, backgroundLayer2, lay, boundariesLayer, labelLayer]
+				}
+			} else map.layers = [backgroundLayer1, backgroundLayer2, boundariesLayer, labelLayer]
 
 			map.redraw()
 		}
