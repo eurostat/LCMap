@@ -223,9 +223,10 @@
 					code: (cell) => cell[year2],
 					color: clcColors,
 					//visible: (z) => z >= 25,
+					filter: (cell) => cell[year1] != cell[year2]
 				})
 
-				const lay = new gridviz.GridLayer(ds, [changeStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[year2] })
+				const lay = new gridviz.GridLayer(changeDataset, [changeStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[year2] })
 				map.layers = [backgroundLayer1, backgroundLayer2, lay, boundariesLayer, labelLayer]
 
 			}
