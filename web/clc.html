@@ -48,7 +48,7 @@
 				<option value="clc1990">1990</option>
 				<option value="change">Change</option>
 			</select><br>
-			<div id="sliderDiv" style="height: 60px; padding: 15px; display: none;">
+			<div id="sliderDiv" style="height: 60px; padding: 15px;">
 				<div id="changeSlider"></div>
 			</div>
 		</div>
@@ -262,13 +262,22 @@
 
 		const update = () => {
 			const layer = document.querySelector('#layer').value
-			sliderDiv.display = layer == "change" ? "inline" : "none"
+
+			/*
+			sliderDiv.style.display = "none"
+
+			console.log(sliderDiv)
+			console.log(sliderDiv.style)
+			console.log(sliderDiv.style.display)
+			*/
 
 			if (layer.startsWith("clc")) {
 				const ds = clcDataset[+layer.replace("clc", "")]
 				const clcLayer = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
 				map.layers = [backgroundLayer1, backgroundLayer2, clcLayer, boundariesLayer, labelLayer]
 			} else if (layer == "change") {
+				//sliderDiv.style.display = "inline"
+
 				let [y1, y2] = slider.noUiSlider.getPositions();
 				y1 = slidersRange[y1 == 0 ? "min" : y1 + "%"]
 				y2 = slidersRange[y2 == 100 ? "max" : y2 + "%"]
