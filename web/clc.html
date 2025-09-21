@@ -4,6 +4,22 @@
 <head>
 	<title>Corine Land Cover map</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
+
+	<style>
+		#changeSlider {
+			border-radius: 0;
+		}
+
+		#changeSlider .noUi-handle {
+			border-radius: 0;
+			background: #2980b9;
+			height: 18px;
+			width: 18px;
+			top: -1px;
+			right: -9px;
+		}
+	</style>
+
 </head>
 
 <body style="font-family: sans-serif;">
@@ -31,6 +47,9 @@
 				<option value="clc1990">1990</option>
 				<option value="change">Change</option>
 			</select><br>
+			<div id="sliderDiv">
+				<div id="changeSlider"></div>
+			</div>
 		</div>
 
 		<div
@@ -212,6 +231,10 @@
 		const boundariesLayer = new gridviz.GeoJSONLayer(gridviz_eurostat.getEurostatBoundariesLayer())
 		//make labels layer
 		const labelLayer = new gridviz.LabelLayer(gridviz_eurostat.getEuronymeLabelLayer('EUR', '20'))
+
+
+		var slider = document.getElementById('changeSlider');
+		noUiSlider.create(slider, { start: [20, 80], connect: true, range: { 'min': 0, 'max': 100 } });
 
 
 		const update = () => {
