@@ -246,6 +246,7 @@
 				const clcLayer = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
 				map.layers = [backgroundLayer1, backgroundLayer2, clcLayer, boundariesLayer, labelLayer]
 			} else if (layer == "change") {
+				//const [y1,y2] = slider.noUiSlider.getPositions();
 				y1 = 1990
 				y2 = 2018
 
