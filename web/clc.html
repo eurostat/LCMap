@@ -257,7 +257,6 @@
 			},
 		});
 
-
 		const update = () => {
 			const layer = document.querySelector('#layer').value
 
@@ -267,8 +266,8 @@
 				map.layers = [backgroundLayer1, backgroundLayer2, clcLayer, boundariesLayer, labelLayer]
 			} else if (layer == "change") {
 				let [y1, y2] = slider.noUiSlider.getPositions();
-				y1 = slidersRange[y1==0?"min":y1+"%"]
-				y2 = slidersRange[y2==100?"max":y2+"%"]
+				y1 = slidersRange[y1 == 0 ? "min" : y1 + "%"]
+				y2 = slidersRange[y2 == 100 ? "max" : y2 + "%"]
 
 				if (y1 >= y2) {
 					map.layers = [backgroundLayer1, backgroundLayer2, boundariesLayer, labelLayer]
@@ -300,6 +299,7 @@
 		}
 
 		document.querySelector('#layer').addEventListener('change', update)
+		slider.noUiSlider.on("drag", update);
 
 		update()
 
