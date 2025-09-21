@@ -8,7 +8,7 @@
 	<style>
 		#changeSlider {
 			border-radius: 0;
-			width: 200px;
+			width: 300px;
 		}
 
 		#changeSlider .noUi-handle {
@@ -235,7 +235,26 @@
 
 
 		var slider = document.getElementById('changeSlider');
-		noUiSlider.create(slider, { start: [2006, 2018], behaviour: 'drag', connect: true, range: { 'min': 1990, 'max': 2019 } });
+		noUiSlider.create(slider, {
+			range: {
+				'min': 1990,
+				'25%': 2000,
+				'50%': 2006,
+				'75%': 2012,
+				'max': 2018
+			},
+			start: [2006, 2012],
+			margin: 1,
+			behaviour: 'drag',
+			connect: true,
+			snap: true,
+			//tooltips: [{ to: v => v }, { to: v => v }],
+			pips: {
+				mode: 'steps',
+				stepped: true,
+				density: 100
+			},
+		});
 
 
 		const update = () => {
