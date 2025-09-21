@@ -48,7 +48,7 @@
 				<option value="clc1990">1990</option>
 				<option value="change">Change</option>
 			</select><br>
-			<div id="sliderDiv" style="height: 60px; padding: 15px;">
+			<div id="sliderDiv" style="height: 60px; padding: 15px; display: none;">
 				<div id="changeSlider"></div>
 			</div>
 		</div>
@@ -256,9 +256,13 @@
 				density: 100
 			},
 		});
+		var sliderDiv = document.getElementById('sliderDiv');
+
+
 
 		const update = () => {
 			const layer = document.querySelector('#layer').value
+			sliderDiv.display = layer == "change" ? "inline" : "none"
 
 			if (layer.startsWith("clc")) {
 				const ds = clcDataset[+layer.replace("clc", "")]
