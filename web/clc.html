@@ -208,6 +208,7 @@
 			code: (cell) => cell.code,
 			color: clcColors,
 			visible: (z) => z >= 25,
+			blendOperation: (z) => 'multiply',
 		})
 
 		const clcSideStyle = new gridviz.SideCategoryStyle({
@@ -219,6 +220,7 @@
 		const clcStyle2 = new gridviz.ShapeColorSizeStyle({
 			color: (cell) => clcColors[cell.code] + "33",
 			visible: (z) => z < 25,
+			blendOperation: (z) => 'multiply',
 		})
 
 
