@@ -344,7 +344,10 @@
 		slider.noUiSlider.on("slide", update);
 
 		window.addEventListener('keydown', function (e) {
+			//console.log(e.key)
 			if (e.key == "a") { blend = !blend; update() }
+			if (e.key == "PageUp") { map.setZoom(map.getZoom()*1.04); update() }
+			if (e.key == "PageDown") { map.setZoom(map.getZoom()/1.04); update() }
 		}, false);
 
 		update()
