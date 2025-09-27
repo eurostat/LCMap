@@ -82,7 +82,20 @@
 	<script src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1"></script>
 
 	<script>
+/*
 
+    // 1. Dessine l'image originale
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // 2. Applique un rectangle noir semi-transparent en mode "multiply"
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; // 0.5 = opacité (ajuste ce valeur pour plus/moins foncé)
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Réinitialise le mode de composition pour les prochains dessins
+    ctx.globalCompositeOperation = 'source-over';
+
+*/
 		const map = new gridviz.Map(document.getElementById('map'), {
 			x: 4030000,
 			y: 2950000,
