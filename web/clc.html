@@ -208,7 +208,7 @@
 			code: (cell) => cell.code,
 			color: clcColors,
 			visible: (z) => z >= 25,
-			blendOperation: (z) => 'multiply',
+			blendOperation: (z) => blend ? 'multiply' : 'source-over',
 		})
 
 		const clcSideStyle = new gridviz.SideCategoryStyle({
@@ -220,7 +220,7 @@
 		const clcStyle2 = new gridviz.ShapeColorSizeStyle({
 			color: (cell) => clcColors[cell.code] + "33",
 			visible: (z) => z < 25,
-			blendOperation: (z) => 'multiply',
+			blendOperation: (z) => blend ? 'multiply' : 'source-over',
 		})
 
 
@@ -340,6 +340,12 @@
 
 		document.querySelector('#layer').addEventListener('change', update)
 		slider.noUiSlider.on("slide", update);
+
+		let blend = false
+		window.addEventListener('keydown', function (e) {
+			console.log(e.key)
+			if (e.key == "a") { blend = !blend; update() }
+		}, false);
 
 		update()
 
