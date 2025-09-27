@@ -289,32 +289,44 @@
 					year2 = "code" + y2
 
 					let changeStyle = undefined
+					let cellInfoHTML = undefined
 					if (layer == "change") {
 
 						//define style
 						changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
-							code: (cell) => cell[year2],
+							code: (c) => c[year2],
 							color: clcColors,
 							//visible: (z) => z >= 25,
-							filter: (cell) => cell[year1] != cell[year2]
+							filter: (c) => c[year1] != c[year2]
 						})
-					} else if (layer == "change_art") {
-						//define style
-						changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
-							code: (cell) => 0,
-							color: { 0: "red" },
-							//visible: (z) => z >= 25,
-							filter: (cell) => artificial.includes(cell[year2]) && !artificial.includes(cell[year1])
-						})
-					}
 
-					const lay = new gridviz.GridLayer(changeDataset, [changeStyle], {
-						minPixelsPerCell: 0.8, cellInfoHTML: (c) => {
+						cellInfoHTML = (c) => {
 							const a = c[year1], b = c[year2]
 							if (a == b) return "No change<br>" + clcLabels[a] + " (code " + a + ")"
 							return "Change<br>" + y1 + ": " + clcLabels[a] + " (code " + a + ")<br>" + y2 + ": "
 								+ clcLabels[b] + " (code " + b + ")"
-						},
+						}
+					} else if (layer == "change_art") {
+						const artif = (c) => artificial.includes(c[year2]) && !artificial.includes(c[year1])
+						//define style
+						changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
+							code: (c) => 0,
+							color: { 0: "red" },
+							//visible: (z) => z >= 25,
+							filter: artif
+						})
+
+						cellInfoHTML = (c) => {
+							const a = c[year1], b = c[year2]
+							if (a == b) return "No change<br>" + clcLabels[a] + " (code " + a + ")"
+							const art = artif(c)
+							return (art?"Artificialisation":"No artificialisation") + "<br>" + "Change<br>" + y1 + ": " + clcLabels[a] + " (code " + a + ")<br>" + y2 + ": "
+								+ clcLabels[b] + " (code " + b + ")"
+						}
+					}
+
+					const lay = new gridviz.GridLayer(changeDataset, [changeStyle], {
+						minPixelsPerCell: 0.8, cellInfoHTML: cellInfoHTML,
 					})
 					map.layers = [backgroundLayer1, backgroundLayer2, lay, boundariesLayer, labelLayer]
 
