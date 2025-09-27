@@ -49,7 +49,7 @@
 					<option value="clc2000">2000</option>
 					<option value="clc1990">1990</option>
 					<option value="change">Change</option>
-					<option value="change">Change - artificialisation</option>
+					<option value="change_art">Change - artificialisation</option>
 				</select>
 			</div>
 			<div id="sliderDiv">
@@ -152,7 +152,7 @@
 			48: 'gray',
 		}
 
-		const artificial = [1,2,3,4,5,6,11]
+		const artificial = [1, 2, 3, 4, 5, 6, 11]
 
 		//define labels for categories
 		const clcLabels = {
@@ -271,13 +271,13 @@
 		const update = () => {
 			const layer = document.querySelector('#layer').value
 
-			sliderDiv.style.display = layer == "change" ? "inline" : "none"
+			sliderDiv.style.display = layer == "change" || layer == "change_art" ? "inline" : "none"
 
 			if (layer.startsWith("clc")) {
 				const ds = clcDataset[+layer.replace("clc", "")]
 				const clcLayer = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
 				map.layers = [backgroundLayer1, backgroundLayer2, clcLayer, boundariesLayer, labelLayer]
-			} else if (layer == "change") {
+			} else if (layer.startsWith("change")) {
 				let [y1, y2] = slider.noUiSlider.getPositions();
 				y1 = slidersRange[y1 == 0 ? "min" : y1 + "%"]
 				y2 = slidersRange[y2 == 100 ? "max" : y2 + "%"]
@@ -288,13 +288,19 @@
 					year1 = "code" + y1
 					year2 = "code" + y2
 
-					//define style
-					const changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
-						code: (cell) => cell[year2],
-						color: clcColors,
-						//visible: (z) => z >= 25,
-						filter: (cell) => cell[year1] != cell[year2]
-					})
+					let changeStyle = undefined
+					if (layer == "change") {
+
+						//define style
+						changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
+							code: (cell) => cell[year2],
+							color: clcColors,
+							//visible: (z) => z >= 25,
+							filter: (cell) => cell[year1] != cell[year2]
+						})
+					} else if (layer == "change_art") {
+						//TODO
+					}
 
 					const lay = new gridviz.GridLayer(changeDataset, [changeStyle], {
 						minPixelsPerCell: 0.8, cellInfoHTML: (c) => {
@@ -305,6 +311,7 @@
 						},
 					})
 					map.layers = [backgroundLayer1, backgroundLayer2, lay, boundariesLayer, labelLayer]
+
 				}
 			} else map.layers = [backgroundLayer1, backgroundLayer2, boundariesLayer, labelLayer]
 
