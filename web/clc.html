@@ -271,7 +271,7 @@
 		const update = () => {
 			const layer = document.querySelector('#layer').value
 
-			sliderDiv.style.display = layer == "change" || layer == "change_art" ? "inline" : "none"
+			sliderDiv.style.display = ["change", "change_art"].includes(layer) ? "inline" : "none"
 
 			if (layer.startsWith("clc")) {
 				const ds = clcDataset[+layer.replace("clc", "")]
@@ -299,7 +299,13 @@
 							filter: (cell) => cell[year1] != cell[year2]
 						})
 					} else if (layer == "change_art") {
-						//TODO
+						//define style
+						changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
+							code: (cell) => 0,
+							color: { 0: "red" },
+							//visible: (z) => z >= 25,
+							filter: (cell) => artificial.includes(cell[year2]) && !artificial.includes(cell[year1])
+						})
 					}
 
 					const lay = new gridviz.GridLayer(changeDataset, [changeStyle], {
