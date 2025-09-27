@@ -204,6 +204,8 @@
 		}
 
 		//define style
+		let blend = false
+
 		const clcStyle = new gridviz.SquareColorCategoryWebGLStyle({
 			code: (cell) => cell.code,
 			color: clcColors,
@@ -341,7 +343,6 @@
 		document.querySelector('#layer').addEventListener('change', update)
 		slider.noUiSlider.on("slide", update);
 
-		let blend = false
 		window.addEventListener('keydown', function (e) {
 			if (e.key == "a") { blend = !blend; update() }
 		}, false);
