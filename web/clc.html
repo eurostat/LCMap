@@ -6,12 +6,12 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
 
 	<style>
-		#changeSlider {
+		.clcSlider {
 			border-radius: 0;
 			width: 300px;
 		}
 
-		#changeSlider .noUi-handle {
+		.clcSlider .noUi-handle {
 			border-radius: 0;
 			background: #2980b9;
 			height: 18px;
@@ -43,14 +43,19 @@
             ">
 			<div>
 				<select id="layer">
-					<option value="lc" selected>Land cover</option>
+					<option value="lc" selected>Land cover by year</option>
 					<option value="change">Land cover change</option>
 					<option value="change_art">Land cover change - artificialisation</option>
 				</select>
 			</div>
 			<div id="sliderDiv">
 				<div style="padding: 14px; height: 45px;">
-					<div id="changeSlider"></div>
+					<div id="slider" class="clcSlider"></div>
+				</div>
+			</div>
+			<div id="changeSliderDiv">
+				<div style="padding: 14px; height: 45px;">
+					<div id="changeSlider" class="clcSlider"></div>
 				</div>
 			</div>
 			<div>
@@ -249,10 +254,11 @@
 		//define boundaries layer
 		const boundariesLayer = new gridviz.GeoJSONLayer(gridviz_eurostat.getEurostatBoundariesLayer())
 		//make labels layer
-		const labelLayer = new gridviz.LabelLayer(gridviz_eurostat.getEuronymeLabelLayer('EUR', '20'))
+		const lblOpt = gridviz_eurostat.getEuronymeLabelLayer('EUR', '20', { exSize: 1.5 })
+		const labelLayer = new gridviz.LabelLayer(lblOpt)
 
 
-		var slider = document.getElementById('changeSlider');
+
 		const slidersRange = {
 			'min': 1990,
 			'25%': 2000,
@@ -260,36 +266,43 @@
 			'75%': 2012,
 			'max': 2018
 		}
+
+
+		var slider = document.getElementById('slider');
 		noUiSlider.create(slider, {
 			range: slidersRange,
-			start: [2006, 2012],
-			margin: 1,
-			behaviour: 'drag',
-			connect: true,
-			snap: true,
-			//tooltips: [{ to: v => v }, { to: v => v }],
-			pips: {
-				mode: 'steps',
-				stepped: true,
-				density: 100
-			},
+			start: [2018],
+			margin: 1, behaviour: 'drag', connect: true, snap: true,
+			pips: { mode: 'steps', stepped: true, density: 100 },
 		});
 		var sliderDiv = document.getElementById('sliderDiv');
+
+		var changeSlider = document.getElementById('changeSlider');
+		noUiSlider.create(changeSlider, {
+			range: slidersRange,
+			start: [2006, 2012],
+			margin: 1, behaviour: 'drag', connect: true, snap: true,
+			pips: { mode: 'steps', stepped: true, density: 100 },
+		});
+		var changeSliderDiv = document.getElementById('changeSliderDiv');
 
 
 
 		const update = () => {
 			const layer = document.getElementById('layer').value
 
-			sliderDiv.style.display = ["change", "change_art"].includes(layer) ? "inline" : "none"
+			// show/hide sliders
+			sliderDiv.style.display = layer == "lc" ? "inline" : "none"
+			changeSliderDiv.style.display = ["change", "change_art"].includes(layer) ? "inline" : "none"
 
+			//get grid layer
 			let glay = undefined
-			if (layer=="lc") {
-				const year = 2018
+			if (layer == "lc") {
+				const year = slider.noUiSlider.get(true);
 				const ds = clcDataset[year]
 				glay = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
 			} else if (layer.startsWith("change")) {
-				let [y1, y2] = slider.noUiSlider.getPositions();
+				let [y1, y2] = changeSlider.noUiSlider.getPositions();
 				y1 = slidersRange[y1 == 0 ? "min" : y1 + "%"]
 				y2 = slidersRange[y2 == 100 ? "max" : y2 + "%"]
 
@@ -351,6 +364,7 @@
 
 		document.getElementById('layer').addEventListener('change', update)
 		slider.noUiSlider.on("slide", update);
+		changeSlider.noUiSlider.on("slide", update);
 
 		document.getElementById('label').addEventListener('change', update)
 		document.getElementById('boundary').addEventListener('change', update)
