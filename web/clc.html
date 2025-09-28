@@ -43,14 +43,17 @@
             ">
 			<div>
 				<select id="layer">
-					<option value="clc2018" selected>2018</option>
-					<option value="clc2012">2012</option>
-					<option value="clc2006">2006</option>
-					<option value="clc2000">2000</option>
-					<option value="clc1990">1990</option>
-					<option value="change">Change</option>
-					<option value="change_art">Change - artificialisation</option>
+					<option value="lc" selected>Land cover</option>
+					<option value="change">Land cover change</option>
+					<option value="change_art">Land cover change - artificialisation</option>
 				</select>
+			</div>
+			<div id="sliderDiv">
+				<div style="padding: 14px; height: 45px;">
+					<div id="changeSlider"></div>
+				</div>
+			</div>
+			<div>
 				<hr>
 				<input type="checkbox" id="label" checked />
 				<label for="label">City names</label><br>
@@ -58,11 +61,6 @@
 				<label for="boundary">Boundaries</label><br>
 				<input type="checkbox" id="background" checked />
 				<label for="background">Background</label>
-			</div>
-			<div id="sliderDiv">
-				<div style="padding: 14px; height: 45px;">
-					<div id="changeSlider"></div>
-				</div>
 			</div>
 		</div>
 
@@ -211,13 +209,11 @@
 		}
 
 		//define style
-		let blend = true
-
 		const clcStyle = new gridviz.SquareColorCategoryWebGLStyle({
 			code: (cell) => cell.code,
 			color: clcColors,
 			visible: (z) => z >= 25,
-			blendOperation: (z) => blend ? 'multiply' : 'source-over',
+			blendOperation: (z) => 'multiply',
 		})
 
 		const clcSideStyle = new gridviz.SideCategoryStyle({
@@ -229,16 +225,17 @@
 		const clcStyle2 = new gridviz.ShapeColorSizeStyle({
 			color: (cell) => clcColors[cell.code] + "33",
 			visible: (z) => z < 25,
-			blendOperation: (z) => blend ? 'multiply' : 'source-over',
+			blendOperation: (z) => 'multiply',
 		})
 
 		//define background layers
+		const bckTrans = 0.4
 		const backgroundLayer1 = new gridviz.BackgroundLayer({
 			url: 'https://raw.githubusercontent.com/jgaffuri/mbxyz/main/pub/elevation_shading/',
 			resolutions: Array.from({ length: 9 }, (_, i) => 28.00132289714475 * Math.pow(2, 10 - i)),
 			origin: [0, 6000000],
 			visible: (z) => z > 25,
-			filterColor: z => "#fff6",
+			filterColor: z => "rgba(255, 255, 255, " + bckTrans + ")",
 			//filterBlendOperation: z => "multiply",
 		})
 		const backgroundLayer2 = new gridviz.BackgroundLayer(
@@ -287,8 +284,9 @@
 			sliderDiv.style.display = ["change", "change_art"].includes(layer) ? "inline" : "none"
 
 			let glay = undefined
-			if (layer.startsWith("clc")) {
-				const ds = clcDataset[+layer.replace("clc", "")]
+			if (layer=="lc") {
+				const year = 2018
+				const ds = clcDataset[year]
 				glay = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
 			} else if (layer.startsWith("change")) {
 				let [y1, y2] = slider.noUiSlider.getPositions();
@@ -342,7 +340,7 @@
 
 			// make map layers stack
 			const lays = []
-			if (document.getElementById('background').checked) {lays.push(backgroundLayer1); lays.push(backgroundLayer2); }
+			if (document.getElementById('background').checked) { lays.push(backgroundLayer1); lays.push(backgroundLayer2); }
 			if (glay) lays.push(glay)
 			if (document.getElementById('boundary').checked) lays.push(boundariesLayer)
 			if (document.getElementById('label').checked) lays.push(labelLayer)
@@ -360,7 +358,7 @@
 
 		window.addEventListener('keydown', function (e) {
 			//console.log(e.key)
-			if (e.key == "a") { blend = !blend; update() }
+			//if (e.key == "a") { blend = !blend; update() }
 			if (e.key == "PageUp") { map.setZoom(map.getZoom() * 1.04); update() }
 			if (e.key == "PageDown") { map.setZoom(map.getZoom() / 1.04); update() }
 		}, false);
