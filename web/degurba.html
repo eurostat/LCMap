@@ -297,7 +297,7 @@
 
 
 		const update = () => {
-			const layer = document.querySelector('#layer').value
+			const layer = document.getElementById('layer').value
 
 			if (layer.startsWith("du")) {
 
@@ -326,9 +326,9 @@
 					cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")",
 				})
 
-				map.layers = [degurbaLayer, boundariesLayer, labelLayer]
+				//map.layers = [degurbaLayer, boundariesLayer, labelLayer]
 				//TODO continue checking that
-				//map.layers = [backgroundLayer1, backgroundLayer2, degurbaLayer, boundariesLayer, labelLayer]
+				map.layers = [backgroundLayer1, backgroundLayer2, degurbaLayer, boundariesLayer, labelLayer]
 			}
 			else if (layer == "chdu2011_2021") {
 
@@ -359,7 +359,8 @@
 					},
 				})
 
-				map.layers = [degurbaLayer, boundariesLayer, labelLayer]
+				//map.layers = [degurbaLayer, boundariesLayer, labelLayer]
+				map.layers = [backgroundLayer1, backgroundLayer2, degurbaLayer, boundariesLayer, labelLayer]
 
 			} else if (layer.startsWith("pop")) {
 				const year = +layer.replace("pop", "")
@@ -377,7 +378,7 @@
 			map.redraw()
 		}
 
-		document.querySelector('#layer').addEventListener('change', update)
+		document.getElementById('layer').addEventListener('change', update)
 
 		update()
 

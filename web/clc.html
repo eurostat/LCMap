@@ -51,6 +51,13 @@
 					<option value="change">Change</option>
 					<option value="change_art">Change - artificialisation</option>
 				</select>
+				<hr>
+				<input type="checkbox" id="label" checked />
+				<label for="label">City names</label><br>
+				<input type="checkbox" id="boundary" checked />
+				<label for="boundary">Boundaries</label><br>
+				<input type="checkbox" id="background" checked />
+				<label for="background">Background</label>
 			</div>
 			<div id="sliderDiv">
 				<div style="padding: 14px; height: 45px;">
@@ -275,7 +282,7 @@
 
 
 		const update = () => {
-			const layer = document.querySelector('#layer').value
+			const layer = document.getElementById('layer').value
 
 			sliderDiv.style.display = ["change", "change_art"].includes(layer) ? "inline" : "none"
 
@@ -342,8 +349,12 @@
 			map.redraw()
 		}
 
-		document.querySelector('#layer').addEventListener('change', update)
+		document.getElementById('layer').addEventListener('change', update)
 		slider.noUiSlider.on("slide", update);
+
+		document.getElementById('label').addEventListener('change', update)
+		document.getElementById('boundary').addEventListener('change', update)
+		document.getElementById('background').addEventListener('change', update)
 
 		window.addEventListener('keydown', function (e) {
 			//console.log(e.key)
