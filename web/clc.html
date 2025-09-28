@@ -286,65 +286,67 @@
 
 			sliderDiv.style.display = ["change", "change_art"].includes(layer) ? "inline" : "none"
 
+			let glay = undefined
 			if (layer.startsWith("clc")) {
 				const ds = clcDataset[+layer.replace("clc", "")]
-				const clcLayer = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
-				map.layers = [backgroundLayer1, backgroundLayer2, clcLayer, boundariesLayer, labelLayer]
+				glay = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
 			} else if (layer.startsWith("change")) {
 				let [y1, y2] = slider.noUiSlider.getPositions();
 				y1 = slidersRange[y1 == 0 ? "min" : y1 + "%"]
 				y2 = slidersRange[y2 == 100 ? "max" : y2 + "%"]
 
-				if (y1 >= y2) {
-					map.layers = [backgroundLayer1, backgroundLayer2, boundariesLayer, labelLayer]
-				} else {
-					year1 = "code" + y1
-					year2 = "code" + y2
+				year1 = "code" + y1
+				year2 = "code" + y2
 
-					let changeStyle = undefined
-					let cellInfoHTML = undefined
-					if (layer == "change") {
+				let changeStyle = undefined
+				let cellInfoHTML = undefined
+				if (layer == "change") {
 
-						//define style
-						changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
-							code: (c) => c[year2],
-							color: clcColors,
-							//visible: (z) => z >= 25,
-							filter: (c) => c[year1] != c[year2]
-						})
-
-						cellInfoHTML = (c) => {
-							const a = c[year1], b = c[year2]
-							if (a == b) return "No change<br>" + clcLabels[a] + " (code " + a + ")"
-							return "Change<br>" + y1 + ": " + clcLabels[a] + " (code " + a + ")<br>" + y2 + ": "
-								+ clcLabels[b] + " (code " + b + ")"
-						}
-					} else if (layer == "change_art") {
-						const artif = (c) => artificial.includes(c[year2]) && !artificial.includes(c[year1])
-						//define style
-						changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
-							code: (c) => 0,
-							color: { 0: "red" },
-							//visible: (z) => z >= 25,
-							filter: artif
-						})
-
-						cellInfoHTML = (c) => {
-							const a = c[year1], b = c[year2]
-							if (a == b) return "No change<br>" + clcLabels[a] + " (code " + a + ")"
-							const art = artif(c)
-							return (art ? "Artificialisation" : "No artificialisation") + "<br>" + y1 + ": " + clcLabels[a] + " (code " + a + ")<br>" + y2 + ": "
-								+ clcLabels[b] + " (code " + b + ")"
-						}
-					}
-
-					const lay = new gridviz.GridLayer(changeDataset, [changeStyle], {
-						minPixelsPerCell: 0.8, cellInfoHTML: cellInfoHTML,
+					//define style
+					changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
+						code: (c) => c[year2],
+						color: clcColors,
+						//visible: (z) => z >= 25,
+						filter: (c) => c[year1] != c[year2]
 					})
-					map.layers = [backgroundLayer1, backgroundLayer2, lay, boundariesLayer, labelLayer]
 
+					cellInfoHTML = (c) => {
+						const a = c[year1], b = c[year2]
+						if (a == b) return "No change<br>" + clcLabels[a] + " (code " + a + ")"
+						return "Change<br>" + y1 + ": " + clcLabels[a] + " (code " + a + ")<br>" + y2 + ": "
+							+ clcLabels[b] + " (code " + b + ")"
+					}
+				} else if (layer == "change_art") {
+					const artif = (c) => artificial.includes(c[year2]) && !artificial.includes(c[year1])
+					//define style
+					changeStyle = new gridviz.SquareColorCategoryWebGLStyle({
+						code: (c) => 0,
+						color: { 0: "red" },
+						//visible: (z) => z >= 25,
+						filter: artif
+					})
+
+					cellInfoHTML = (c) => {
+						const a = c[year1], b = c[year2]
+						if (a == b) return "No change<br>" + clcLabels[a] + " (code " + a + ")"
+						const art = artif(c)
+						return (art ? "Artificialisation" : "No artificialisation") + "<br>" + y1 + ": " + clcLabels[a] + " (code " + a + ")<br>" + y2 + ": "
+							+ clcLabels[b] + " (code " + b + ")"
+					}
 				}
-			} else map.layers = [backgroundLayer1, backgroundLayer2, boundariesLayer, labelLayer]
+
+				glay = new gridviz.GridLayer(changeDataset, [changeStyle], {
+					minPixelsPerCell: 0.8, cellInfoHTML: cellInfoHTML,
+				})
+			}
+
+			// make map layers stack
+			const lays = []
+			if (document.getElementById('background').checked) {lays.push(backgroundLayer1); lays.push(backgroundLayer2); }
+			if (glay) lays.push(glay)
+			if (document.getElementById('boundary').checked) lays.push(boundariesLayer)
+			if (document.getElementById('label').checked) lays.push(labelLayer)
+			map.layers = lays
 
 			map.redraw()
 		}
