@@ -11,10 +11,11 @@ from utils.geotiff import resample_geotiff_aligned
 
 path = "/home/juju/geodata/gisco/degurba/"
 years = [ "2021", "2011" ]
-resolutions = [1000]
+resolutions = [10000, 5000, 2000, 1000]
 resampling = True
 tiling = True
 
+#
 os.makedirs("./tmp/degurba/", exist_ok=True)
 
 # resampling
@@ -22,7 +23,7 @@ if resampling:
     for resolution in resolutions:
         for year in years:
             print(datetime.now(), "resampling", year, resolution)
-            resample_geotiff_aligned(path + "DGURBA_LEVEL2_GRD_"+year+"/DGUR_LEVEL2_GRD_1KM_"+year+".tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif", resolution, resampling=Resampling.mode, dtype=np.int8)
+            resample_geotiff_aligned(path + "DGURBA_LEVEL2_GRD_"+year+"/DGUR_LEVEL2_GRD_1KM_"+year+".tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif", resolution, resampling=Resampling.mode, dtype=np.int64)
 
 
 # tiling
