@@ -8,10 +8,11 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils.geotiff import resample_geotiff_aligned
 
+
 path = "/home/juju/geodata/gisco/degurba/"
 years = [ "2021", "2011" ]
 resolutions = [1000]
-resampling = False
+resampling = True
 tiling = True
 
 
