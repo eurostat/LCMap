@@ -11,8 +11,8 @@ from utils.geotiff import resample_geotiff_aligned
 
 path = "/home/juju/geodata/gisco/degurba/"
 years = [ "2021", "2011" ]
-resolutions = [10000, 5000, 2000, 1000]
-resampling = True
+resolutions = [2000, 1000] #10000, 5000, 
+resampling = False
 tiling = True
 
 #
