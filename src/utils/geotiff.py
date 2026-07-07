@@ -233,7 +233,8 @@ def geotiff_mask_by_countries(
             gpkg_column,
             values, # the ones to keep
             compress=None,
-            all_touched=True
+            all_touched=True,
+            invert=False, # if True, mask the ones in values
     ):
     # read input raster
     with rasterio.open(in_tiff_path) as src:
@@ -257,17 +258,21 @@ def geotiff_mask_by_countries(
         nodata_value = -9999
         profile.update(nodata=nodata_value)
 
-    # mask based on pixel square intersection (any overlap)
+    # keep only geometries
+    gdf = gdf.geometry
+
+    # boolean mask indicating which raster pixels do NOT intersect any geometry from gdf
+    v = 1 if invert else 0
     mask = rasterize(
-        [(geom, 1) for geom in gdf.geometry],
+        [(geom, 1-v) for geom in gdf],
         out_shape=(height, width),
         transform=transform,
-        fill=0,  # pixels with no intersection
+        fill=v, # Used as fill value for all areas not covered by input geometries
         all_touched= all_touched,  # any intersection with pixel => burn value
         dtype='uint8'
-    ) == 0  # True where no intersection
+    ) == 0  # Remove those with value 0: Set to True where value is 0.
 
-    # apply mask to every band: set pixels outside geometries to nodata
+    # apply mask to every band: set pixels to nodata where mask is True
     data[:, mask] = nodata_value
 
     # set compression
@@ -391,7 +396,7 @@ def resample_geotiff_aligned(input_path, output_path, new_resolution, resampling
 
 
 
-def crop_extend_bbox(input_path, bbox, output_path, nodata_value=None):
+def crop_extend_bbox(input_path, bbox, output_path, fill_value=None):
     """
     Crop a GeoTIFF raster file to a given bounding box.
     Areas outside the input raster are filled with a no-data value.
@@ -400,17 +405,17 @@ def crop_extend_bbox(input_path, bbox, output_path, nodata_value=None):
         input_path (str): Path to the input GeoTIFF file.
         bbox (tuple): (minx, miny, maxx, maxy) in the same CRS as the GeoTIFF.
         output_path (str): Path to save the cropped GeoTIFF file.
-        nodata_value (numeric, optional): No-data value to use for areas outside the raster.
-                                          If None, uses the source raster's no-data value.
+        fill_value (numeric, optional): Value to use for areas outside the raster.
+                                         If None, uses the source raster's no-data value.
     """
     with rasterio.open(input_path) as src:
         minx, miny, maxx, maxy = bbox
         raster_bounds = src.bounds
 
         # Use existing no-data value if none provided
-        if nodata_value is None:
-            nodata_value = src.nodata
-            if nodata_value is None:
+        if fill_value is None:
+            fill_value = src.nodata
+            if fill_value is None:
                 raise ValueError("No-data value not defined in source raster. Please provide one.")
 
         # Compute resolution
@@ -422,7 +427,7 @@ def crop_extend_bbox(input_path, bbox, output_path, nodata_value=None):
 
         # Initialize output array filled with no-data
         out_shape = (src.count, out_height, out_width)
-        out_data = np.full(out_shape, nodata_value, dtype=src.dtypes[0])
+        out_data = np.full(out_shape, fill_value, dtype=src.dtypes[0])
 
         # Compute intersection between bbox and raster extent
         intersection_minx = max(minx, raster_bounds.left)
@@ -458,7 +463,7 @@ def crop_extend_bbox(input_path, bbox, output_path, nodata_value=None):
             'height': out_height,
             'width': out_width,
             'transform': out_transform,
-            'nodata': nodata_value
+            'nodata': src.nodata
         })
 
         # Write output raster

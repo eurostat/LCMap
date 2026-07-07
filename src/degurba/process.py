@@ -23,7 +23,7 @@ if resampling:
     for resolution in resolutions:
         for year in years:
             print(datetime.now(), "resampling", year, resolution)
-            resample_geotiff_aligned(path + "DGURBA_LEVEL2_GRD_"+year+"/DGUR_LEVEL2_GRD_1KM_"+year+".tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif", resolution, resampling=Resampling.mode, dtype=np.int64)
+            resample_geotiff_aligned(path + "DGURBA_LEVEL2_GRD_"+year+"/DGUR_LEVEL2_GRD_1KM_"+year+"_extended.tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif", resolution, resampling=Resampling.mode, dtype=np.int64)
 
 
 # tiling
