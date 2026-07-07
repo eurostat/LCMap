@@ -15,6 +15,7 @@ resolutions = [1000]
 resampling = True
 tiling = True
 
+os.makedirs("./tmp/degurba/", exist_ok=True)
 
 # resampling
 if resampling:
