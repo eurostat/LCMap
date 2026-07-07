@@ -78,9 +78,29 @@
 		12 - Low density rural grid cell (171 205 102) #ABCD66
 		11- Very low density Urban grid cell (205 245 122) #CDF57A
 		10 – Water (122 182 245) #7AB6F5
+		
+130 = Urban Centre (was 30)
+223= Dense Urban Custer (was 23)
+222 = Semi dense Urban cluster (remains the same)
+221 = Suburban/peri-urban grid cell (was 21)
+313 = Rural cluster (was 13)
+312 = Low density rural grid cell (was 12)
+311 = Very low density rural grid cell (was 11)
+310 = Water		
 		*/
 
+
+
 		const degurbaCodeToText = {
+			130: "Urban centre",
+			223: "Dense Urban cluster",
+			222: "Semi-dense Urban cluster",
+			221: "Suburban cluster",
+			313: "Rural cluster",
+			312: "Low density rural grid cell",
+			311: "Very low density Urban grid cell",
+			310: "Water",
+			/*
 			30: "Urban centre",
 			23: "Dense Urban cluster",
 			22: "Semi-dense Urban cluster",
@@ -89,11 +109,21 @@
 			12: "Low density rural grid cell",
 			11: "Very low density Urban grid cell",
 			10: "Water",
-			0: "No data",
+			0: "No data",*/
 		}
 
 
 		const degurbaCodeToColour = {
+			130: "#FE0000",
+			223: "#732600",
+			222: "#A87000",
+			221: "#FFFF00",
+			313: "#375623",
+			312: "#ABCD66",
+			311: "#CDF57A",
+			310: "#7AB6F5",
+			//0: "#eee",
+/*
 			30: "#FE0000",
 			23: "#732600",
 			22: "#A87000",
@@ -102,7 +132,7 @@
 			12: "#ABCD66",
 			11: "#CDF57A",
 			10: "#7AB6F5",
-			0: "#eee",
+			0: "#eee",*/
 		}
 
 		/*
