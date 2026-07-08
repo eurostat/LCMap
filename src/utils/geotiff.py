@@ -538,3 +538,18 @@ def read_geotiff_pixels_as_dicts(geotiff_path, bbox=None, band_number=1, value_c
 #out = read_geotiff_pixels_as_dicts('/home/juju/gisco/road_transport_performance/population_2021.tif', bbox=[4030000, 2930000, 4060000, 2960000], value_criteria_fun=lambda v:v>0)
 #for c in out: print(c['x'], c['y'], c['value'])
 
+def replace_tiff_value(input_path, output_path, old_value, new_value):
+
+    with rasterio.open(input_path) as src:
+        profile = src.profile
+        data = src.read()
+
+    # Replace values
+    data[data == old_value] = new_value
+
+    # If -9999 should also be the nodata value
+    #profile.update(nodata=-9999)
+
+    with rasterio.open(output_path, "w", **profile) as dst:
+        dst.write(data)
+

@@ -6,33 +6,35 @@ import numpy as np
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from utils.geotiff import resample_geotiff_aligned
+from utils.geotiff import replace_tiff_value, resample_geotiff_aligned
 
 # tiling
-# TODO make 2021 population tiff + aggregate
-# TODO join population figures
-# TODO show prop circles on pop
 # TODO deal with waters 310 ?
 
 
 path = "/home/juju/geodata/gisco/degurba/"
 years = [ "2021", "2011" ]
 resolutions = [10000, 5000, 2000, 1000] #
-resampling = False
-tiling = True
 
 #
 os.makedirs("./tmp/degurba/", exist_ok=True)
 
 # resampling
-if resampling:
+if True:
     for resolution in resolutions:
         for year in years:
             print(datetime.now(), "resampling", year, resolution)
             resample_geotiff_aligned(path + "DGURBA_LEVEL2_GRD_"+year+"/DGUR_LEVEL2_GRD_1KM_"+year+"_extended.tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif", resolution, resampling=Resampling.mode, dtype=np.int64)
 
+if True:
+    for resolution in resolutions:
+        for year in years:
+            print(datetime.now(), "Set water to no_data", year, resolution)
+            replace_tiff_value("./tmp/degurba/"+year+"_"+str(resolution)+".tif", "./tmp/degurba/a.tif", 310, -9999)
+            os.remove("./tmp/degurba/"+year+"_"+str(resolution)+".tif")
+            os.rename("./tmp/degurba/a.tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif")
 
-if tiling:
+if True:
     for resolution in resolutions:
         print(datetime.now(), "Tiling", resolution)
 
