@@ -21,18 +21,17 @@ os.makedirs("./tmp/degurba/", exist_ok=True)
 
 # resampling
 if True:
-    for resolution in resolutions:
-        for year in years:
-            print(datetime.now(), "resampling", year, resolution)
-            resample_geotiff_aligned(path + "DGURBA_LEVEL2_GRD_"+year+"/DGUR_LEVEL2_GRD_1KM_"+year+"_extended.tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif", resolution, resampling=Resampling.mode, dtype=np.int64)
+    for year in years:
 
-if True:
-    for resolution in resolutions:
-        for year in years:
-            print(datetime.now(), "Set water to no_data", year, resolution)
-            replace_tiff_value("./tmp/degurba/"+year+"_"+str(resolution)+".tif", "./tmp/degurba/a.tif", 310, -9999)
-            os.remove("./tmp/degurba/"+year+"_"+str(resolution)+".tif")
-            os.rename("./tmp/degurba/a.tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif")
+        # prepare 1000m file with water set to no_data
+        replace_tiff_value(path + "DGURBA_LEVEL2_GRD_"+year+"/DGUR_LEVEL2_GRD_1KM_"+year+"_extended.tif", "./tmp/degurba/"+year+"_1000.tif", 310, -9999)
+
+        # aggregate other resolutions
+        for resolution in resolutions:
+            if resolution == 1000: continue
+            print(datetime.now(), "resampling", year, resolution)
+            resample_geotiff_aligned("./tmp/degurba/"+year+"_1000.tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif", resolution, resampling=Resampling.mode, dtype=np.int64)
+
 
 if True:
     for resolution in resolutions:
