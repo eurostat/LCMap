@@ -164,8 +164,8 @@
 
 		const popScale = gridviz.logarithmicScale(-7)
 		const popStyle = new gridviz.ShapeColorSizeStyle({
-			viewScale: (cells) => d3.max(cells, c => c.p),
-			color: (cell, resolution, z, max) => d3.interpolateYlOrRd(popScale((+cell.p) / (max))),
+			viewScale: (cells) => d3.max(cells, c => c.T),
+			color: (cell, resolution, z, max) => d3.interpolateYlOrRd(popScale((+cell.T) / (max))),
 			alpha: (z) => (z < 100 ? 0.75 : undefined),
 			blendOperation: (z) => z < 100 ? 'multiply' : 'source-over',
 		})
@@ -395,7 +395,7 @@
 			} else if (layer.startsWith("pop")) {
 				const year = +layer.replace("pop", "")
 				const ds = popDataset[year]
-				const popLayer = new gridviz.GridLayer(ds, [popStyle, popStrokeStyle], { minPixelsPerCell: 1, cellInfoHTML: (cell) => cell.p })
+				const popLayer = new gridviz.GridLayer(ds, [popStyle, popStrokeStyle], { minPixelsPerCell: 1, cellInfoHTML: (cell) => cell.T })
 				map.layers = [backgroundLayer1, backgroundLayer2, popLayer, boundariesLayer, labelLayer]
 			}
 			else if (layer.startsWith("clc")) {

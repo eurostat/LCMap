@@ -8,6 +8,12 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils.geotiff import resample_geotiff_aligned
 
+# tiling
+# TODO make 2021 population tiff + aggregate
+# TODO join population figures
+# TODO show prop circles on pop
+# TODO deal with waters 310 ?
+
 
 path = "/home/juju/geodata/gisco/degurba/"
 years = [ "2021", "2011" ]
@@ -26,8 +32,6 @@ if resampling:
             resample_geotiff_aligned(path + "DGURBA_LEVEL2_GRD_"+year+"/DGUR_LEVEL2_GRD_1KM_"+year+"_extended.tif", "./tmp/degurba/"+year+"_"+str(resolution)+".tif", resolution, resampling=Resampling.mode, dtype=np.int64)
 
 
-# tiling
-# TODO modify gridtiler to ignore value=10 (water) ?
 if tiling:
     for resolution in resolutions:
         print(datetime.now(), "Tiling", resolution)
@@ -40,6 +44,8 @@ if tiling:
         dict = {}
         for year in years:
             dict["du" + year] = { "file" : "./tmp/degurba/"+year+"_"+str(resolution)+".tif", "band":1 }
+            #TODO add population column
+            #dict["T" + year] = { "file" : "./tmp/degurba/"+year+"_"+str(resolution)+".tif", "band":1 }
 
         # launch tiling
         gridtiler_raster.tiling_raster(
