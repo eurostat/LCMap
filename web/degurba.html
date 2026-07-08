@@ -56,14 +56,16 @@
 		const map = new gridviz.Map(document.getElementById('map'), {
 			x: 4030000,
 			y: 2950000,
-			z: 180,
+			z: 2000,
 		}).addZoomButtons()
 
 		// degurba dataset
 
+		//const urlBase = "https://raw.githubusercontent.com/eurostat/LCMap/main/pub/degurba/v1/"
+		const urlBase = "https://ec.europa.eu/eurostat/cache/GISCO/tiled-grids/degurba/v1/"
 		const degurbaYears = [2011, 2021]
 		const degUrbaDataset = new gridviz.MultiResolutionDataset([1000, 2000, 5000, 10000],
-			(resolution) => new gviz_par.TiledParquetGrid(map, 'https://raw.githubusercontent.com/eurostat/LCMap/main/pub/degurba/v1/' + resolution + "/"), {
+			(resolution) => new gviz_par.TiledParquetGrid(map, urlBase + resolution + "/"), {
 			preprocess: c => {
 				if (!c.du2011) c.du2011 = 0
 				if (!c.du2021) c.du2021 = 0
@@ -128,24 +130,24 @@
 				const att = "T_" + year
 
 				if (!sbp) {
-					const ff = (cell) => cell[layer] != '0' && (sopc ? cell[att] : true)
+					const ff = (c) => c[layer] != '0' && (sopc ? c[att] : true)
 
 					const degurbaStyle = new gridviz.SquareColorCategoryWebGLStyle({
-						code: (cell) => cell[layer],
+						code: (c) => c[layer],
 						color: degurbaCodeToColour,
 						visible: (z) => z >= 150,
 						filter: ff,
 					})
 
 					const degurbaSideStyle = new gridviz.SideCategoryStyle({
-						code: (cell) => cell[layer],
+						code: (c) => c[layer],
 						color: degurbaCodeToColour,
 						width: (side, r, z) => z * 3,
 						visible: (z) => z < 150,
 						filter: ff,
 					})
 					const degurbaStyle2 = new gridviz.ShapeColorSizeStyle({
-						color: (cell) => degurbaCodeToColour[cell[layer]] + "33",
+						color: (c) => degurbaCodeToColour[c[layer]] + "33",
 						visible: (z) => z < 150,
 						filter: ff,
 					})
@@ -153,17 +155,17 @@
 					//make grid layer
 					degurbaLayer = new gridviz.GridLayer(degUrbaDataset, [degurbaStyle, degurbaStyle2, degurbaSideStyle], {
 						minPixelsPerCell: 1,
-						cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")<br>Population: " + cell[att],
+						cellInfoHTML: (c) => sopc && !c[att] ? undefined : degurbaCodeToText[c[layer]] + " (code " + c[layer] + ")<br>Population: " + c[att],
 					})
 
 				} else {
 
 					const st = new gridviz.ShapeColorSizeStyle({
-						filter: (cell) => cell[att],
-						viewScale: (cells) => d3.max(cells, c => c[att]),
-						color: (cell) => degurbaCodeToColour[cell[layer]],
+						filter: (c) => c[att],
+						viewScale: (cs) => d3.max(cs, c => c[att]),
+						color: (c) => degurbaCodeToColour[c[layer]],
 						shape: () => "circle",
-						size: (c, r, z, max) => r * 1.41 * popScale(c[att] / max),
+						size: (c, r, z, max) => 0.2*z + r * (1.41 * popScale(c[att] / max)),
 						//alpha: (z) => (z < 100 ? 0.75 : undefined),
 						//blendOperation: (z) => z < 100 ? 'multiply' : 'source-over',
 					})
@@ -173,7 +175,7 @@
 					//make grid layer
 					degurbaLayer = new gridviz.GridLayer(degUrbaDataset, [st], {
 						minPixelsPerCell: 4,
-						cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")<br>Population: " + cell[att],
+						cellInfoHTML: (c) => c[att]? degurbaCodeToText[c[layer]] + " (code " + c[layer] + ")<br>Population: " + c[att] : undefined,
 					})
 
 				}
