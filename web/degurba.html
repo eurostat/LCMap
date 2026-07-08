@@ -22,9 +22,8 @@
 				<option value="chdu2011_2021">Degree of urbanisation 2011-2021 change</option>
 				<option value="pop2021">Population 2021</option>
 				<option value="pop2011">Population 2011</option>
-				<option value="clc2018">Corine land cover 2018</option>
-				<option value="clc2012">Corine land cover 2012</option>
 			</select><br>
+			<input type="checkbox" id="sbp" name="sbp" value="sbp"><label for="sbp"> Size cells by population</label>
 		</div>
 
 		<div
@@ -68,28 +67,6 @@
 		}
 		)
 
-		/*
-		30 - Urban centre (255 0 0) #FF0000
-		23 - Dense Urban cluster (115 38 0)  #732600
-		22 - Semi-dense Urban cluster (168 112 0) #A87000
-		21- Suburban cluster (255 255 0) #FFFF00
-		13 - Rural cluster (55 86 35) #375623
-		12 - Low density rural grid cell (171 205 102) #ABCD66
-		11- Very low density Urban grid cell (205 245 122) #CDF57A
-		10 – Water (122 182 245) #7AB6F5
-		
-130 = Urban Centre (was 30)
-223= Dense Urban Custer (was 23)
-222 = Semi dense Urban cluster (remains the same)
-221 = Suburban/peri-urban grid cell (was 21)
-313 = Rural cluster (was 13)
-312 = Low density rural grid cell (was 12)
-311 = Very low density rural grid cell (was 11)
-310 = Water		
-		*/
-
-
-
 		const degurbaCodeToText = {
 			130: "Urban centre",
 			223: "Dense Urban cluster",
@@ -99,15 +76,6 @@
 			312: "Low density rural grid cell",
 			311: "Very low density Urban grid cell",
 			310: "Water",
-			/*
-			30: "Urban centre",
-			23: "Dense Urban cluster",
-			22: "Semi-dense Urban cluster",
-			21: "Suburban cluster",
-			13: "Rural cluster",
-			12: "Low density rural grid cell",
-			11: "Very low density Urban grid cell",
-			10: "Water",*/
 			0: "No data",
 		}
 
@@ -122,46 +90,8 @@
 			311: "#CDF57A",
 			310: "#7AB6F5",
 			0: "#eee",
-/*
-			30: "#FE0000",
-			23: "#732600",
-			22: "#A87000",
-			21: "#FFFF00",
-			13: "#375623",
-			12: "#ABCD66",
-			11: "#CDF57A",
-			10: "#7AB6F5",
-			0: "#eee",*/
 		}
 
-		/*
-		const degurbaCodeToColourBright = Object.fromEntries(
-			Object.entries(degurbaCodeToColour).map(([key, value]) => [key,
-			//d3.color(value).brighter(2)
-			d3.color(value).copy({opacity: 0.05})
-		])
-		)
-		const degurbaCodeToColourDark = Object.fromEntries(
-			Object.entries(degurbaCodeToColour).map(([key, value]) => [key, 
-			//d3.color(value).darker(2)
-			value
-		])
-		)*/
-
-
-
-
-/*
-		const popYears = [2006, 2011, 2018, 2021]
-
-		//define multi resolution dataset
-		const popDataset = {}
-		for (const year of popYears)
-			popDataset[year] = new gridviz.MultiResolutionDataset(
-				[1000, 2000, 5000, 10000, 20000, 50000, 100000],
-				(resolution) => new gviz_par.TiledParquetGrid(map, 'https://raw.githubusercontent.com/jgaffuri/tiled-popgrid/main/pub/v1/' + year + '/' + resolution + '/')
-			)
-*/
 		const popYears = [2011, 2021]
 
 		const popScale = gridviz.logarithmicScale(-7)
@@ -181,134 +111,6 @@
 			strokeWidth: (c, r, z) => r * 0.04,
 			visible: (z) => z < 100,
 		})
-
-		const clcYears = [1990, 2000, 2006, 2012, 2018]
-
-		//define clc multi resolution datasets
-		const clcDataset = {}
-		for (const year of clcYears)
-			clcDataset[year] = new gridviz.MultiResolutionDataset(
-				[100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000],
-				(resolution) => new gviz_par.TiledParquetGrid(map, 'https://raw.githubusercontent.com/eurostat/LCMap/main/pub/clc/v1/' + year + '/' + resolution + '/')
-			)
-
-
-		//define colors for categories
-		const clcColors = {
-			1: '#e6004d',
-			2: '#ff0000',
-			3: '#cc4df2',
-			4: '#cc0000',
-			5: '#e6cccc',
-			6: '#e6cce6',
-			7: '#a600cc',
-			8: '#a64d00',
-			9: '#ff4dff',
-			10: '#ffa6ff',
-			11: '#ffe6ff',
-			12: '#ffffa8',
-			13: '#ffff00',
-			14: '#e6e600',
-			15: '#e68000',
-			16: '#f2a64d',
-			17: '#e6a600',
-			18: '#e6e64d',
-			19: '#ffe6a6',
-			20: '#ffe64d',
-			21: '#e6cc4d',
-			22: '#f2cca6',
-			23: '#80ff00',
-			24: '#00a600',
-			25: '#4dff00',
-			26: '#ccf24d',
-			27: '#a6ff80',
-			28: '#a6e64d',
-			29: '#a6f200',
-			30: '#e6e6e6',
-			31: '#cccccc',
-			32: '#ccffcc',
-			33: '#000000',
-			34: '#a6e6cc',
-			35: '#a6a6ff',
-			36: '#4d4dff',
-			37: '#ccccff',
-			38: '#e6e6ff',
-			39: '#a6a6e6',
-			40: '#00ccf2',
-			41: '#80f2e6',
-			42: '#00ffa6',
-			43: '#a6ffe6',
-			44: '#e6f2ff',
-			48: 'gray',
-		}
-
-		//define labels for categories
-		const clcLabels = {
-			1: 'Continuous urban fabric',
-			2: 'Discontinuous urban fabric',
-			3: 'Industrial or commercial units',
-			4: 'Road and rail networks and associated land',
-			5: 'Port areas',
-			6: 'Airports',
-			7: 'Mineral extraction sites',
-			8: 'Dump sites',
-			9: 'Construction sites',
-			10: 'Green urban areas',
-			11: 'Sport and leisure facilities',
-			12: 'Non-irrigated arable land',
-			13: 'Permanently irrigated land',
-			14: 'Rice fields',
-			15: 'Vineyards',
-			16: 'Fruit trees and berry plantations',
-			17: 'Olive groves',
-			18: 'Pastures',
-			19: 'Annual crops associated with permanent crops',
-			20: 'Complex cultivation patterns',
-			21: 'Land principally occupied by agriculture with significant areas of natural vegetation',
-			22: 'Agro-forestry areas',
-			23: 'Broad-leaved forest',
-			24: 'Coniferous forest',
-			25: 'Mixed forest',
-			26: 'Natural grasslands',
-			27: 'Moors and heathland',
-			28: 'Sclerophyllous vegetation',
-			29: 'Transitional woodland-shrub',
-			30: 'sands',
-			31: 'Bare rocks',
-			32: 'Sparsely vegetated areas',
-			33: 'Burnt areas',
-			34: 'Glaciers and perpetual snow',
-			35: 'Inland marshes',
-			36: 'Peat bogs',
-			37: 'Salt marshes',
-			38: 'Salines',
-			39: 'Intertidal flats',
-			40: 'Water courses',
-			41: 'Water bodies',
-			42: 'Coastal lagoons',
-			43: 'Estuaries',
-			44: 'Sea and ocean',
-			48: 'No data',
-		}
-
-		//define style
-		const clcStyle = new gridviz.SquareColorCategoryWebGLStyle({
-			code: (cell) => cell.code,
-			color: clcColors,
-			visible: (z) => z >= 25,
-		})
-
-		const clcSideStyle = new gridviz.SideCategoryStyle({
-			code: (cell) => cell.code,
-			color: clcColors,
-			width: (side, r, z) => z * 3,
-			visible: (z) => z < 25,
-		})
-		const clcStyle2 = new gridviz.ShapeColorSizeStyle({
-			color: (cell) => clcColors[cell.code] + "33",
-			visible: (z) => z < 25,
-		})
-
 
 
 		//define background layers
@@ -333,37 +135,67 @@
 
 		const update = () => {
 			const layer = document.getElementById('layer').value
+			const sbp = document.getElementById('sbp').checked
+			console.log("layer", layer, "sbp", sbp)
+
+
+
 
 			if (layer.startsWith("du")) {
+				let degurbaLayer = undefined
 
-				const degurbaStyle = new gridviz.SquareColorCategoryWebGLStyle({
-					code: (cell) => cell[layer],
-					color: degurbaCodeToColour,
-					visible: (z) => z >= 150,
-					filter: (cell) => cell[layer] != '0' //&& cell[layer] != '10',
-				})
+				if (!sbp) {
 
-				const degurbaSideStyle = new gridviz.SideCategoryStyle({
-					code: (cell) => cell[layer],
-					color: degurbaCodeToColour,
-					width: (side, r, z) => z * 3,
-					visible: (z) => z < 150,
-				})
-				const degurbaStyle2 = new gridviz.ShapeColorSizeStyle({
-					color: (cell) => degurbaCodeToColour[cell[layer]] + "33",
-					visible: (z) => z < 150,
-				})
+					const degurbaStyle = new gridviz.SquareColorCategoryWebGLStyle({
+						code: (cell) => cell[layer],
+						color: degurbaCodeToColour,
+						visible: (z) => z >= 150,
+						filter: (cell) => cell[layer] != '0' //&& cell[layer] != '10',
+					})
 
-				//make grid layer
-				const year = +layer.replace("du", "")
-				const degurbaLayer = new gridviz.GridLayer(degUrbaDataset, [degurbaStyle, degurbaStyle2, degurbaSideStyle], {
-					minPixelsPerCell: 1,
-					cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")",
-				})
+					const degurbaSideStyle = new gridviz.SideCategoryStyle({
+						code: (cell) => cell[layer],
+						color: degurbaCodeToColour,
+						width: (side, r, z) => z * 3,
+						visible: (z) => z < 150,
+					})
+					const degurbaStyle2 = new gridviz.ShapeColorSizeStyle({
+						color: (cell) => degurbaCodeToColour[cell[layer]] + "33",
+						visible: (z) => z < 150,
+					})
 
-				//map.layers = [degurbaLayer, boundariesLayer, labelLayer]
-				//TODO continue checking that
+					//make grid layer
+					degurbaLayer = new gridviz.GridLayer(degUrbaDataset, [degurbaStyle, degurbaStyle2, degurbaSideStyle], {
+						minPixelsPerCell: 1,
+						cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")",
+					})
+
+				} else {
+					const year = +layer.replace("du", "")
+					const att = "T_" + year
+
+					const st = new gridviz.ShapeColorSizeStyle({
+						filter: (cell) => cell[att],
+						viewScale: (cells) => d3.max(cells, c => c[att]),
+						color: (cell) => degurbaCodeToColour[cell[layer]],
+						shape: () => "circle",
+						size: (c, r, z, max) =>  r * 1.41 * popScale(c[att] / max),
+						//alpha: (z) => (z < 100 ? 0.75 : undefined),
+						//blendOperation: (z) => z < 100 ? 'multiply' : 'source-over',
+					})
+
+					//viewScale: gridviz.viewScale({ valueFunction: (c) => +c.POP_2021, stretching: gridviz.logarithmicScale(-7) }),
+
+					//make grid layer
+					degurbaLayer = new gridviz.GridLayer(degUrbaDataset, [st], {
+						minPixelsPerCell: 10,
+						cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")",
+					})
+
+				}
+
 				map.layers = [backgroundLayer1, backgroundLayer2, degurbaLayer, boundariesLayer, labelLayer]
+
 			}
 			else if (layer == "chdu2011_2021") {
 
@@ -399,7 +231,7 @@
 
 			} else if (layer.startsWith("pop")) {
 				const year = +layer.replace("pop", "")
-				const popLayer = new gridviz.GridLayer(degUrbaDataset, [popStyle[year], popStrokeStyle], { minPixelsPerCell: 1, cellInfoHTML: (cell) => cell["T_"+year] })
+				const popLayer = new gridviz.GridLayer(degUrbaDataset, [popStyle[year], popStrokeStyle], { minPixelsPerCell: 1, cellInfoHTML: (cell) => cell["T_" + year] })
 				map.layers = [backgroundLayer1, backgroundLayer2, popLayer, boundariesLayer, labelLayer]
 			}
 			else if (layer.startsWith("clc")) {
@@ -412,7 +244,9 @@
 			map.redraw()
 		}
 
-		document.getElementById('layer').addEventListener('change', update)
+		// add GUI event listeners
+		for (const elt of ['layer', 'sbp'])
+			document.getElementById(elt).addEventListener('change', update)
 
 		update()
 
