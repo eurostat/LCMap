@@ -24,7 +24,9 @@
 				<option value="pop2011">Population 2011</option>
 			</select><br>
 			<input type="checkbox" id="sbp" name="sbp" value="sbp"><label for="sbp"> Size cells by population</label>
-			<input type="checkbox" id="sopc" name="sopc" value="sopc"><label for="sopc"> Show only populated cells</label>
+			<br>
+			<input type="checkbox" id="sopc" name="sopc" value="sopc"><label for="sopc"> Show only populated
+				cells</label>
 		</div>
 
 		<div
@@ -65,8 +67,7 @@
 				if (!c.du2011) c.du2011 = 0
 				if (!c.du2021) c.du2021 = 0
 			}
-		}
-		)
+		})
 
 		const degurbaCodeToText = {
 			130: "Urban centre",
@@ -80,7 +81,6 @@
 			0: "No data",
 		}
 
-
 		const degurbaCodeToColour = {
 			130: "#FE0000",
 			223: "#732600",
@@ -93,26 +93,7 @@
 			0: "#eee",
 		}
 
-		const popYears = [2011, 2021]
-
 		const popScale = gridviz.logarithmicScale(-7)
-		const popStyle = {}
-		for (const year of popYears) {
-			const att = "T_" + year
-			popStyle[year] = new gridviz.ShapeColorSizeStyle({
-				filter: (cell) => cell[att],
-				viewScale: (cells) => d3.max(cells, c => c[att]),
-				color: (cell, resolution, z, max) => d3.interpolateYlOrRd(popScale((+cell[att]) / (max))),
-				alpha: (z) => (z < 100 ? 0.75 : undefined),
-				blendOperation: (z) => z < 100 ? 'multiply' : 'source-over',
-			})
-		}
-		const popStrokeStyle = new gridviz.StrokeStyle({
-			strokeColor: () => 'gray',
-			strokeWidth: (c, r, z) => r * 0.04,
-			visible: (z) => z < 100,
-		})
-
 
 		//define background layers
 		const backgroundLayer1 = new gridviz.BackgroundLayer({
@@ -138,10 +119,7 @@
 			const layer = document.getElementById('layer').value
 			const sbp = document.getElementById('sbp').checked
 			const sopc = document.getElementById('sopc').checked
-			console.log("layer", layer, "sbp", sbp, "sopc", sopc)
-
-
-
+			//console.log("layer", layer, "sbp", sbp, "sopc", sopc)
 
 			if (layer.startsWith("du")) {
 				let degurbaLayer = undefined
@@ -184,7 +162,7 @@
 						viewScale: (cells) => d3.max(cells, c => c[att]),
 						color: (cell) => degurbaCodeToColour[cell[layer]],
 						shape: () => "circle",
-						size: (c, r, z, max) =>  r * 1.41 * popScale(c[att] / max),
+						size: (c, r, z, max) => r * 1.41 * popScale(c[att] / max),
 						//alpha: (z) => (z < 100 ? 0.75 : undefined),
 						//blendOperation: (z) => z < 100 ? 'multiply' : 'source-over',
 					})
@@ -203,15 +181,6 @@
 
 			}
 			else if (layer == "chdu2011_2021") {
-
-				/*const degurbaStyle = new gridviz.SquareColorCategoryWebGLStyle({
-					code: (cell) => cell.du2021,
-					color: degurbaCodeToColourBright,
-					//visible: (z) => z >= 150,
-					filter: (cell) => cell.du2021
-				})*/
-
-				//d3.color("steelblue").brighter(1)
 
 				const degurbaChangeStyle = new gridviz.SquareColorCategoryWebGLStyle({
 					code: (cell) => cell.du2021,
@@ -236,13 +205,25 @@
 
 			} else if (layer.startsWith("pop")) {
 				const year = +layer.replace("pop", "")
-				const popLayer = new gridviz.GridLayer(degUrbaDataset, [popStyle[year], popStrokeStyle], { minPixelsPerCell: 1, cellInfoHTML: (cell) => cell["T_" + year] })
+				const att = "T_" + year
+
+				const popStyle = new gridviz.ShapeColorSizeStyle({
+					filter: (cell) => cell[att],
+					viewScale: (cells) => d3.max(cells, c => c[att]),
+					color: (cell, resolution, z, max) => d3.interpolateYlOrRd(popScale((+cell[att]) / (max))),
+					alpha: (z) => (z < 100 ? 0.75 : undefined),
+					blendOperation: (z) => z < 100 ? 'multiply' : 'source-over',
+				})
+
+				const popStrokeStyle = new gridviz.StrokeStyle({
+					strokeColor: () => 'gray',
+					strokeWidth: (c, r, z) => r * 0.04,
+					visible: (z) => z < 100,
+					filter: (cell) => cell[att],
+				})
+
+				const popLayer = new gridviz.GridLayer(degUrbaDataset, [popStyle, popStrokeStyle], { minPixelsPerCell: 1, cellInfoHTML: (cell) => cell[att] })
 				map.layers = [backgroundLayer1, backgroundLayer2, popLayer, boundariesLayer, labelLayer]
-			}
-			else if (layer.startsWith("clc")) {
-				const ds = clcDataset[+layer.replace("clc", "")]
-				const clcLayer = new gridviz.GridLayer(ds, [clcStyle, clcStyle2, clcSideStyle], { minPixelsPerCell: 0.8, cellInfoHTML: (cell) => clcLabels[cell.code] })
-				map.layers = [backgroundLayer1, backgroundLayer2, clcLayer, boundariesLayer, labelLayer]
 			}
 			else map.layers = [backgroundLayer1, backgroundLayer2, boundariesLayer, labelLayer]
 
