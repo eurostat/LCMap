@@ -8,13 +8,12 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils.geotiff import replace_tiff_value, resample_geotiff_aligned
 
-# tiling
-# TODO deal with waters 310 ?
-
+# prapare tiled degurba grid
+#TODO
 
 path = "/home/juju/geodata/gisco/degurba/"
 years = [ "2021", "2011" ]
-resolutions = [10000, 5000, 2000, 1000] #
+resolutions = [10000, 5000, 2000, 1000]
 
 #
 os.makedirs("./tmp/degurba/", exist_ok=True)
