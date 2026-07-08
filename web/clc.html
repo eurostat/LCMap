@@ -96,8 +96,11 @@
 		const map = new gridviz.Map(document.getElementById('map'), {
 			x: 4030000,
 			y: 2950000,
-			z: 180,
+			z: 2000,
 		}).addZoomButtons()
+
+		//const urlBase = "https://raw.githubusercontent.com/eurostat/LCMap/main/pub/clc/v1/"
+		const urlBase = "https://ec.europa.eu/eurostat/cache/GISCO/tiled-grids/clc/v1/"
 
 		const clcYears = [1990, 2000, 2006, 2012, 2018]
 
@@ -105,12 +108,12 @@
 		for (const year of clcYears)
 			clcDataset[year] = new gridviz.MultiResolutionDataset(
 				[100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000],
-				(resolution) => new gviz_par.TiledParquetGrid(map, 'https://raw.githubusercontent.com/eurostat/LCMap/main/pub/clc/v1/' + year + '/' + resolution + '/')
+				(resolution) => new gviz_par.TiledParquetGrid(map, urlBase + year + '/' + resolution + '/')
 			)
 
 		const changeDataset = new gridviz.MultiResolutionDataset(
 			[100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000],
-			(resolution) => new gviz_par.TiledParquetGrid(map, 'https://raw.githubusercontent.com/eurostat/LCMap/main/pub/clc/v1/change/' + resolution + '/')
+			(resolution) => new gviz_par.TiledParquetGrid(map, urlBase + 'change/' + resolution + '/')
 		)
 
 		//define colors for categories
