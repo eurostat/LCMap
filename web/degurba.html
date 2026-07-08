@@ -24,6 +24,7 @@
 				<option value="pop2011">Population 2011</option>
 			</select><br>
 			<input type="checkbox" id="sbp" name="sbp" value="sbp"><label for="sbp"> Size cells by population</label>
+			<input type="checkbox" id="sopc" name="sopc" value="sopc"><label for="sopc"> Show only populated cells</label>
 		</div>
 
 		<div
@@ -136,21 +137,25 @@
 		const update = () => {
 			const layer = document.getElementById('layer').value
 			const sbp = document.getElementById('sbp').checked
-			console.log("layer", layer, "sbp", sbp)
+			const sopc = document.getElementById('sopc').checked
+			console.log("layer", layer, "sbp", sbp, "sopc", sopc)
 
 
 
 
 			if (layer.startsWith("du")) {
 				let degurbaLayer = undefined
+				const year = +layer.replace("du", "")
+				const att = "T_" + year
 
 				if (!sbp) {
+					const ff = (cell) => cell[layer] != '0' && (sopc ? cell[att] : true)
 
 					const degurbaStyle = new gridviz.SquareColorCategoryWebGLStyle({
 						code: (cell) => cell[layer],
 						color: degurbaCodeToColour,
 						visible: (z) => z >= 150,
-						filter: (cell) => cell[layer] != '0' //&& cell[layer] != '10',
+						filter: ff,
 					})
 
 					const degurbaSideStyle = new gridviz.SideCategoryStyle({
@@ -158,21 +163,21 @@
 						color: degurbaCodeToColour,
 						width: (side, r, z) => z * 3,
 						visible: (z) => z < 150,
+						filter: ff,
 					})
 					const degurbaStyle2 = new gridviz.ShapeColorSizeStyle({
 						color: (cell) => degurbaCodeToColour[cell[layer]] + "33",
 						visible: (z) => z < 150,
+						filter: ff,
 					})
 
 					//make grid layer
 					degurbaLayer = new gridviz.GridLayer(degUrbaDataset, [degurbaStyle, degurbaStyle2, degurbaSideStyle], {
 						minPixelsPerCell: 1,
-						cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")",
+						cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")<br>Population: " + cell[att],
 					})
 
 				} else {
-					const year = +layer.replace("du", "")
-					const att = "T_" + year
 
 					const st = new gridviz.ShapeColorSizeStyle({
 						filter: (cell) => cell[att],
@@ -189,7 +194,7 @@
 					//make grid layer
 					degurbaLayer = new gridviz.GridLayer(degUrbaDataset, [st], {
 						minPixelsPerCell: 10,
-						cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")",
+						cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")<br>Population: " + cell[att],
 					})
 
 				}
@@ -245,7 +250,7 @@
 		}
 
 		// add GUI event listeners
-		for (const elt of ['layer', 'sbp'])
+		for (const elt of ['layer', 'sbp', 'sopc'])
 			document.getElementById(elt).addEventListener('change', update)
 
 		update()
