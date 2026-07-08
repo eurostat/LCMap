@@ -44,8 +44,8 @@ if tiling:
         dict = {}
         for year in years:
             dict["du" + year] = { "file" : "./tmp/degurba/"+year+"_"+str(resolution)+".tif", "band":1 }
-        dict["T2011"] = { "file" : "/home/juju/geodata/census/pop_20XX_"+str(resolution)+"m.tif", "band":2 }
-        dict["T2021"] = { "file" : "/home/juju/geodata/census/pop_20XX_"+str(resolution)+"m.tif", "band":4 }
+        dict["T_2011"] = { "file" : "/home/juju/geodata/census/pop_20XX_"+str(resolution)+"m.tif", "band":2 }
+        dict["T_2021"] = { "file" : "/home/juju/geodata/census/pop_20XX_"+str(resolution)+"m.tif", "band":4 }
 
         # launch tiling
         gridtiler_raster.tiling_raster(
