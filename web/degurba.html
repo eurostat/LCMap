@@ -15,6 +15,7 @@
                 width: auto;
                 height: auto;
                 padding: 5px;
+				background: #FFFFFFCC;
             ">
 			<select id="layer">
 				<option value="du2021" selected>Degree of urbanisation 2021</option>
@@ -171,7 +172,7 @@
 
 					//make grid layer
 					degurbaLayer = new gridviz.GridLayer(degUrbaDataset, [st], {
-						minPixelsPerCell: 10,
+						minPixelsPerCell: 4,
 						cellInfoHTML: (cell) => degurbaCodeToText[cell[layer]] + " (code " + cell[layer] + ")<br>Population: " + cell[att],
 					})
 
